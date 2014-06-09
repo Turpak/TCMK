@@ -1,4 +1,4 @@
-﻿#include "bigNumber.h"
+#include "bigNumber.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -173,13 +173,12 @@ bool bigNumber::saveNumberToBinFile(const char* filename)
 // для этого надо находить остатки от деления на 256
 // пока число не уменьшиться до 0
 
-	getString();
-
 	ofstream Result_file(filename, std::ios::binary);
 	if (Result_file.fail())
 		return false;
 	
 	bigNumber temp = *this; // число, которое будем делить на 256
+	temp.getString();
 	bigNumber b256 = 256; // чтобы каждый раз не вызывать конструктор
 	bigNumber b0 = (long long int)0;
 
@@ -187,7 +186,6 @@ bool bigNumber::saveNumberToBinFile(const char* filename)
 	{
 		bigNumber remainder;
 		temp = _dividing(temp, b256, remainder); // делим temp на 256, в remainder - остаток
-		remainder.getString();
 
 		// то, что осталось в remainder - необходимо записать в файл, точнее самый младший разряд
 		// ведь остаток от деления на 256 при BASE > 256 будет занимать один разряд
@@ -219,13 +217,13 @@ bool bigNumber::getNumberFromBinFile(const char* filename)
 
 	// переведём содержимое файла к основанию BASE
 	bigNumber res;
-	bigNumber b256 = 256; // чтобы каждый раз не вызывать конструктор из int
+	bigNumber b256 = 1;
 	for (int i = 0; i < SizeOfFile; i++)
 	{
-		res = res * b256;
-		res = res + fileContent[i];
+		unsigned int fi = fileContent[i];
+		res = res + b256 * fi;
+		b256 = b256 * 256;
 	}
-
 	*this = res;
 	return true;
 }
@@ -445,6 +443,32 @@ bigNumber bigNumber::_dividing(const bigNumber& A, const bigNumber& B, bigNumber
 		remainder = A;
 		return bigNumber((long long int) 0);
 	}
+	
+
+	// деление на одноразрядное число
+	// ОЧЕНЬ СИЛЬНО ускоряет работу с бинарными файлами (точнее, при записи в бинарный файл)
+	if (divider._size == 1)
+	{
+		remainder._setSize(1);
+		bigNumber res;
+		res._setSize(A._size);
+		unsigned long long int carry = 0;
+		for (int i = A._size - 1; i >= 0; i--)
+		{
+			unsigned long long int temp = carry;
+			temp *= BASE;
+			temp += A[i];
+			res[i] = temp / divider[0];
+			carry = (unsigned long long int)  temp - (unsigned long long int) res[i] * (unsigned long long int) divider[0];
+		}
+		remainder._sign = (!A._sign && B._sign) || (A._sign && !B._sign);
+		remainder[0] = carry;
+		remainder._DelZeroes();
+		res._sign = (!A._sign && B._sign) || (A._sign && !B._sign);
+		res._DelZeroes();
+		return res;
+	}
+
 
 	bigNumber res;
 	res._setSize(A._size - B._size + 1);
