@@ -4,83 +4,15 @@
 #include "bigNumber.h"
 using namespace std;
 
-void noArguments();
 void printUsage();
 bool checkArguments(int argc, char* argv[]);
 bool getFromFiles(char* fileA, char* fileB, char* fileMod, char operation, bool binary, bigNumber& A, bigNumber& B, bigNumber& modulus);
 bool process(bigNumber A, bigNumber B, bigNumber modulus, char operation, bigNumber& res);
 bool saveRes(char* fileRes, bool binary, bigNumber res);
 
-void noArguments()
-{
-	/*bigNumber A = "1111111111111", B = "1111111111111111";
-	bigNumber C = A + B;
-	C = A + B;
-	C = A * B;
-	A = C * B;
-	C = A / B;
-	C = A - B;
-	C = A * B - C + C * C;*/
-	cout << "Launched without parameters." << endl;
-	cout << "Perform all kind of operations with entered numbers." << endl;
-
-	bigNumber a, b;
-	cout << "Enter A: ";
-	cin >> a;
-	cout << "Enter B: ";
-	cin >> b;
-
-	cout << "A + B = " << a << " + " << b << " = " << a + b << endl;
-	cout << "A - B = " << a << " - " << b << " = " << a - b << endl;
-	cout << "A * B = " << a << " * " << b << " = " << a * b << endl;
-	try
-	{
-		cout << "A / B = " << a << " / " << b << " = " << a / b << endl;
-	}
-	catch (int err)
-	{
-		if (err == DIV_BY_ZERO)
-			cout << "Division by zero" << endl;
-	}
-	try
-	{
-		cout << "A % B = " << a << " % " << b << " = " << a % b << endl;
-	}
-	catch (int err)
-	{
-		if (err == DIV_BY_ZERO)
-			cout << "Division by zero" << endl;
-	}
-
-	bigNumber mod;
-	cout << endl << "Enter modulus for pow: ";
-	cin >> mod;
-	cout << "A ^ B mod N = " << a << " ^ " << b << " mod " << mod << " = " << Pow(a, b, mod) << endl;
-
-	/*if (!a.getFromTextFile("input.txt"))
-	cout << "Reading from text file failed" << endl;
-
-	a *= b;
-
-	if (!a.saveToBinFile("output.bin"))
-	cout << "Saving to binary file failed" << endl;
-
-	if (!a.getFromBinFile("output.bin"))
-	cout << "Reading from binary file failed" << endl;
-
-	a++;
-
-	if (!a.saveToTextFile("output.txt"))
-	cout << "Saving to text file failed" << endl;*/
-
-}
-
 
 int main(int argc, char* argv[])
 {
-	//noArguments();
-	//return 0;
-
 	if (!checkArguments(argc, argv))
 		return -1;
 
@@ -122,15 +54,14 @@ int main(int argc, char* argv[])
 
 void printUsage()
 {
-	cout << "Usage: " << endl;
-	cout << "TCHMK_1 <A file name> <operation> <B file name> <result file name> [-b] [<modulus file name>]" << endl << endl;
+	cout << "TCMK <A file name> <operation> <B file name> <result file name> [-b] [<modulus file name>]" << endl << endl;
 	cout << "Parameters:" << endl;
-	cout << "  -b for operations with binary files" << endl;
-	cout << "  operations:" << endl;
+	cout << "  -b for binary files" << endl;
+	cout << "  list of operations:" << endl;
 	cout << "    \"+\" - addition" << endl;
 	cout << "    \"-\" - subtraction" << endl;
 	cout << "    \"*\" - multiplication" << endl;
-	cout << "    \"/\" - division" << endl;
+	cout << "    \"/\" - dividing" << endl;
 	cout << "    \"%\" - taking the remainder" << endl;
 	cout << "    \"^\" - involution" << endl;
 }
@@ -214,7 +145,7 @@ bool process(bigNumber A, bigNumber B, bigNumber modulus, char operation, bigNum
 {
 	if (modulus < (long long int)0)
 	{
-		cout << "Negative modulus!" << endl;
+		cout << "Incorrect! Modulus < 0!" << endl;
 		return false;
 	}
 
@@ -245,33 +176,11 @@ bool process(bigNumber A, bigNumber B, bigNumber modulus, char operation, bigNum
 		break;
 
 	case '/':
-		try
-		{
-			res = A / B;  
-		}
-		catch (int err)
-		{
-			if (err == DIV_BY_ZERO)
-			{
-				cout << "Division by zero" << endl;
-				return false;
-			}
-		}
+		res = A / B;  
 		break;
 
 	case '%':
-		try
-		{
-			res = A % B;
-		}
-		catch (int err)
-		{
-			if (err == DIV_BY_ZERO)
-			{
-				cout << "Division by zero" << endl;
-				return false;
-			}
-		}
+		res = A % B;
 		break;
 	
 	default:
@@ -286,7 +195,6 @@ bool process(bigNumber A, bigNumber B, bigNumber modulus, char operation, bigNum
 		while (res < (long long int)0)
 			res = res + modulus;
 	}
-
 	return true;
 }
 
