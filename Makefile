@@ -3,7 +3,7 @@ linuxpy: main.cpp bigNumber.cpp
 	g++ -fPIC -c bigNumber.cpp
 	g++ -fPIC -c bigNumber_wrap.cxx -I/usr/include/python2.7
 	g++ -shared bigNumber.o bigNumber_wrap.o -o _bigNumber.so
-	
+
 linuxdyn: main.cpp bigNumber.cpp
 	g++ -c -fPIC bigNumber.cpp
 	g++ -shared -o libbignumber.so bigNumber.o
