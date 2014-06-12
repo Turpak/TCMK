@@ -6,12 +6,12 @@ import sys
 
 def getArguments ():
 	parser = argparse.ArgumentParser(prog = "TCMK_3")
-	parser.add_argument ('A_filename', help = "filename of file with 1-st big integer")
-	parser.add_argument ('operation', choices=['+', '-', '*', '/', '%', '^'], help = "operations")
-	parser.add_argument ('B_filename', help = "filename of file with 2-nd big integer")
-	parser.add_argument ('result_filename', help = "filename of result file")
-	parser.add_argument ('-b', action='store_const', const=True,  default=False, help = "perform binary files")
-	parser.add_argument ('mod_filename', help = "filename of file with modulus", nargs='?')
+	parser.add_argument ('A_filename', help = "First big number")
+	parser.add_argument ('operation', choices=['+', '-', '*', '/', '^', '%'], help = "operations")
+	parser.add_argument ('B_filename', help = "Second big number")
+	parser.add_argument ('result_filename', help = "Result file")
+	parser.add_argument ('-b', action='store_const', const=True,  default=False, help = "Binary files")
+	parser.add_argument ('mod_filename', help = "File with modulus", nargs='?')
  	return parser.parse_args()
  
 def getFromFiles (fileA, fileB, fileMod, binary):
@@ -47,7 +47,7 @@ def process(A, B, modulus, operation):
 	res = zero
 	
 	if (modulus < zero):
-		print "Negative modulus!"
+		print "Incorrect! Modulus < 0!"
 		return False, res
 		
 	if operation == '^':
@@ -69,13 +69,13 @@ def process(A, B, modulus, operation):
 
 	elif operation == '/':
 		if B == zero:
-			print "Division by zero"
+			print "Dividing by zero"
 			return False, res
 		res = A / B
 
 	elif operation == '%':
 		if (B == zero):
-			print "Division by zero"
+			print "Dividing by zero"
 			return False, res
 		res = A % B
 	
