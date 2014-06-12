@@ -5,7 +5,7 @@ import sys
 
 
 def getArguments ():
-	parser = argparse.ArgumentParser(prog = "TCHMK_3")
+	parser = argparse.ArgumentParser(prog = "TCMK_3")
 	parser.add_argument ('A_filename', help = "filename of file with 1-st big integer")
 	parser.add_argument ('operation', choices=['+', '-', '*', '/', '%', '^'], help = "operations")
 	parser.add_argument ('B_filename', help = "filename of file with 2-nd big integer")
